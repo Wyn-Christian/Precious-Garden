@@ -77,3 +77,12 @@ content-type: application/json
     "pot_diameter":222,
     "type":"outdoor"
 }
+
+###
+POST http://localhost:4021/view-product
+content-type: application/json
+
+{
+    "user":"sample-user",
+    "product":"sample-product"
+}
