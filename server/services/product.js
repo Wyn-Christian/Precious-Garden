@@ -1,4 +1,8 @@
-const { PlantsProduct, Product } = require("../models/product");
+const {
+  Product,
+  PlantsProduct,
+  ViewProduct,
+} = require("../models/product");
 
 exports.list = (req, res, next) => {
   Product.find()
@@ -108,6 +112,22 @@ exports.plant_update = (req, res, next) => {
       console.log("Product Update Successfully", result);
       res.json(result);
     })
+    .catch((error) => {
+      console.log(error);
+      next(error);
+    });
+};
+
+exports.view_product = (req, res, next) => {
+  let view = new ViewProduct({
+    metadata: {
+      product: req.body.product,
+    },
+  });
+
+  view
+    .save()
+    .then((result) => console.log("Add view", result))
     .catch((error) => {
       console.log(error);
       next(error);
