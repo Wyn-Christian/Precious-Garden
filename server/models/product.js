@@ -37,17 +37,16 @@ const ProductSchema = new Schema(
     },
   }
 );
-
 function getValue(value) {
   if (typeof value !== "undefined") {
     return parseFloat(value.toString());
   }
   return value;
 }
-
 ProductSchema.virtual("img_url").get(function () {
   return `/images/products/${this.img_name}`;
 });
+const Product = mongoose.model("Product", ProductSchema);
 
 const PlantsProductSchema = new Schema({
   height: Number,
@@ -58,11 +57,27 @@ const PlantsProductSchema = new Schema({
     required: true,
   },
 });
-
-const Product = mongoose.model("Product", ProductSchema);
 const PlantsProduct = Product.discriminator(
   "PlantsProduct",
   PlantsProductSchema
 );
 
-module.exports = { Product, PlantsProduct };
+const ViewProductSchema = new Schema(
+  {
+    view: { type: Number, default: 1 },
+    timestamp: { type: Date, default: Date.now },
+    metadata: {
+      user: String,
+      product: String,
+    },
+  },
+  {
+    timeseries: {
+      timeField: "timestamp",
+      metaField: "metadata",
+    },
+  }
+);
+const ViewProduct = mongoose.model("View-Product", ViewProductSchema);
+
+module.exports = { Product, PlantsProduct, ViewProduct };
