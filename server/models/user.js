@@ -27,3 +27,16 @@ const UserSchema = new Schema(
   }
 );
 const User = mongoose.model("User", UserSchema);
+
+const CustomerSchema = new Schema({
+  username: {
+    type: String,
+    required: true,
+  },
+  status: {
+    type: String,
+    enum: ["non-verified", "verified", "blocked"],
+    default: "non-verified",
+  },
+});
+const Customer = User.discriminator("Customer", CustomerSchema);
