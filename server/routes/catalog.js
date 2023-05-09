@@ -13,6 +13,7 @@ router.post("/product/create", product_services.create);
 router.post("/product/:id/update", product_services.update);
 router.post("/plant-product/create", product_services.plant_create);
 router.post("/plant-product/:id/update", product_services.plant_update);
+router.post("/view-product", product_services.view_product);
 router.get("/product/:id", product_services.detail);
 router.get("/products", product_services.list);
 
