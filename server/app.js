@@ -17,6 +17,7 @@ var catalogRouter = require("./routes/catalog");
 
 mongoose.plugin(castAggregation);
 mongoose.set("toJSON", { virtuals: true });
+mongoose.set("id", true);
 mongoose.set("strictQuery", false);
 
 const mongodbUrl = process.env.MONGO_URL;
