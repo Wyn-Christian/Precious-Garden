@@ -7,18 +7,22 @@ POST http://localhost:4021/category/create
 content-type: application/json
 
 {
-  "name": "sample-4",
-  "description": "sample-4-description"
+  "name": "sample-5",
+  "description": "sample-5-description"
 }
 
 ###
-POST http://localhost:4021/category/6458ac4830a36937e74a423a/update
+POST http://localhost:4021/category/645b13027d54a34765681ccd/update
 content-type: application/json
 
 {
-  "name": "sample-hhah",
-  "description": "sample-description"
+  "name": "sample-4-update-delete",
+  "description": "sample-description-4-update-delete"
 }
+
+###
+POST http://localhost:4021/category/6458e5457ce23d6b10343914/delete
+content-type: application/json
 
 ###
 # PRODUCTS ----------------------------------------------
