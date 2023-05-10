@@ -90,3 +90,60 @@ content-type: application/json
     "user":"sample-user",
     "product":"sample-product"
 }
+###
+# USERS ----------------------------------------------
+GET http://localhost:4021/users
+
+###
+GET http://localhost:4021/user/645a4fbd6f19b6cd2903c16c
+
+###
+POST http://localhost:4021/user/create
+content-type: application/json
+
+{
+	"name": "sample-admin",
+	"email":  "admin@sample.com",
+	"password": "1234",
+	"type": "admin"
+}
+
+###
+POST http://localhost:4021/user/645a4fbd6f19b6cd2903c16c/update
+content-type: application/json
+
+{
+	"name": "sample-admin-update",
+	"email":  "admin-update@sample.com",
+	"password": "1234",
+	"type": "admin"
+}
+
+###
+POST http://localhost:4021/customer/create
+content-type: application/json
+
+{
+	"name": "sample-customer-2",
+	"username": "sample-username-2",
+	"email":  "customer2@sample.com",
+	"password": "1234",
+	"type": "customer"
+}
+
+###
+POST http://localhost:4021/customer/645a59e36f19b6cd2903c179/update
+content-type: application/json
+
+{
+	"name": "sample-customer-update-2",
+	"username": "sample-username-update-2",
+	"email":  "customer-update2@sample.com",
+	"password": "1234",
+	"type": "customer"
+}
+
+###
+POST http://localhost:4021/login-customer
+
+
