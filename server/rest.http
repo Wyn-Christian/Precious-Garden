@@ -147,3 +147,36 @@ content-type: application/json
 POST http://localhost:4021/login-customer
 
 
+###
+# CART ITEMS ----------------------------------------------
+GET http://localhost:4021/cart-items
+
+###
+GET http://localhost:4021/customer/645a536f6f19b6cd2903c174/cart-items
+
+###
+GET http://localhost:4021/cart-item/645b0dd37f01005f89a8a92c
+
+###
+POST http://localhost:4021/cart-item/create
+content-type: application/json
+
+{
+	"customer": "645a536f6f19b6cd2903c174", 
+	"product": "6458e591c82443471361b6b3"
+}
+
+###
+POST http://localhost:4021/cart-item/645b0dd37f01005f89a8a92c/update
+content-type: application/json
+
+{
+	"customer": "645a536f6f19b6cd2903c174", 
+	"product": "6458f74842f1c51ddd0a89ce",
+	"quantity": 23
+}
+
+
+###
+POST http://localhost:4021/cart-item/645b0d6e7f01005f89a8a925/delete
+content-type: application/json
