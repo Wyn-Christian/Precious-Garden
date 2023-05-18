@@ -67,7 +67,6 @@ const ViewProductSchema = new Schema(
     view: { type: Number, default: 1 },
     timestamp: { type: Date, default: Date.now },
     metadata: {
-      user: String,
       product: String,
     },
   },
