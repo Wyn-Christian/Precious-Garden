@@ -35,7 +35,7 @@ exports.create = (req, res, next) => {
   product
     .save()
     .then((result) => {
-      console.log("Product Create Successfully", result);
+      console.log("Create Product Successfully", result);
       res.json(result);
     })
     .catch((error) => {
@@ -49,7 +49,7 @@ exports.update = (req, res, next) => {
     req.body);
   Product.findByIdAndUpdate(req.params.id, product, { new: true })
     .then((result) => {
-      console.log("Product Update Successfully", result);
+      console.log("Update Product Successfully", result);
       res.json(result);
     })
     .catch((error) => {
@@ -58,7 +58,7 @@ exports.update = (req, res, next) => {
     });
 };
 
-exports.plant_create = (req, res, next) => {
+exports.create_plant = (req, res, next) => {
   const {
     name,
     description,
@@ -69,7 +69,6 @@ exports.plant_create = (req, res, next) => {
     pot_diameter,
     type,
   } = req.body;
-  console.log("test-test", req.body);
 
   const plant_product = new PlantsProduct({
     name,
@@ -81,12 +80,11 @@ exports.plant_create = (req, res, next) => {
     pot_diameter,
     type,
   });
-  console.log("plant_prodcut", plant_product);
 
   plant_product
     .save()
     .then((result) => {
-      console.log("Product Create Successfully", result);
+      console.log("Create Plant Product Successfully", result);
       res.json(result);
     })
     .catch((error) => {
@@ -95,7 +93,7 @@ exports.plant_create = (req, res, next) => {
     });
 };
 
-exports.plant_update = (req, res, next) => {
+exports.update_plant = (req, res, next) => {
   const product = ({
     name,
     description,
@@ -109,7 +107,7 @@ exports.plant_update = (req, res, next) => {
 
   PlantsProduct.findByIdAndUpdate(req.params.id, product, { new: true })
     .then((result) => {
-      console.log("Product Update Successfully", result);
+      console.log("Update Product Successfully", result);
       res.json(result);
     })
     .catch((error) => {
@@ -127,7 +125,7 @@ exports.view_product = (req, res, next) => {
 
   view
     .save()
-    .then((result) => console.log("Add view", result))
+    .then((result) => console.log("View Product", result))
     .catch((error) => {
       console.log(error);
       next(error);
