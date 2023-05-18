@@ -2,13 +2,17 @@ const Category = require("../models/category");
 
 exports.list = (req, res, next) => {
   Category.find()
-    .then((result) => res.json(result))
+    .then((result) => {
+      res.json(result);
+    })
     .catch((err) => next(err));
 };
 
 exports.detail = (req, res, next) => {
   Category.findById(req.params.id)
-    .then((result) => res.json(result))
+    .then((result) => {
+      res.json(result);
+    })
     .catch((err) => next(err));
 };
 
@@ -20,7 +24,10 @@ exports.create = (req, res, next) => {
 
   category
     .save()
-    .then((result) => res.json(result))
+    .then((result) => {
+      console.log("Create Category Successfully", result);
+      res.json(result);
+    })
     .catch((err) => next(err));
 };
 
@@ -30,8 +37,18 @@ exports.update = (req, res, next) => {
     description: req.body.description,
   };
   Category.findByIdAndUpdate(req.params.id, category, { new: true })
-    .then((result) => res.json(result))
+    .then((result) => {
+      console.log("Update Category Successfully", result);
+      res.json(result);
+    })
     .catch((err) => next(err));
 };
 
-exports.delete = (req, res, next) => {};
+exports.delete = (req, res, next) => {
+  Category.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      console.log("Delete Category Successfully", result);
+      res.json(result);
+    })
+    .catch((err) => next(err));
+};
