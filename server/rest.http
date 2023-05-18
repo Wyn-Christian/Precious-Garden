@@ -33,11 +33,11 @@ POST http://localhost:4021/product/create
 content-type: application/json
 
 {
-    "name":"sample-product-1",
-    "description":"sample-description",
-    "price":1111.1,
-    "category":"6458ac4830a36937e74a423a",
-    "img_name":"sample-image"
+	"name":"sample-product-1",
+	"description":"sample-description",
+	"price":1111.1,
+	"category":"6458ac4830a36937e74a423a",
+	"img_name":"sample-image"
 }
 
 ###
@@ -45,11 +45,11 @@ POST http://localhost:4021/product/6458e5accafaf52e58559a60/update
 content-type: application/json
 
 {
-    "name":"sample-product-upate",
-    "description":"sample-description-update",
-    "price":2222.1,
-    "category":"6458ac4830a36937e74a423a",
-    "img_name":"sample-image",
+	"name":"sample-product-upate",
+	"description":"sample-description-update",
+	"price":2222.1,
+	"category":"6458ac4830a36937e74a423a",
+	"img_name":"sample-image",
 }
 
 ###
@@ -57,14 +57,14 @@ POST http://localhost:4021/plant-product/create
 content-type: application/json
 
 {
-    "name":"sample-plant-product-create-2",
-    "description":"sample-description-plant-create-2",
-    "price":2222.1,
-    "category":"6458ac4830a36937e74a423a",
-    "img_name":"sample-image",
-    "height":10,
-    "pot_diameter":10,
-    "type":"indoor"
+	"name":"sample-plant-product-create-2",
+	"description":"sample-description-plant-create-2",
+	"price":2222.1,
+	"category":"6458ac4830a36937e74a423a",
+	"img_name":"sample-image",
+	"height":10,
+	"pot_diameter":10,
+	"type":"indoor"
 }
 
 ###
@@ -72,14 +72,14 @@ POST http://localhost:4021/plant-product/6458f74842f1c51ddd0a89ce/update
 content-type: application/json
 
 {
-    "name":"sample-plant-product-update-2",
-    "description":"sample-description-update-2",
-    "price":2222.1,
-    "category":"6458ac4830a36937e74a423a",
-    "img_name":"sample-image-update",
-    "height":111,
-    "pot_diameter":222,
-    "type":"outdoor"
+	"name":"sample-plant-product-update-2",
+	"description":"sample-description-update-2",
+	"price":2222.1,
+	"category":"6458ac4830a36937e74a423a",
+	"img_name":"sample-image-update",
+	"height":111,
+	"pot_diameter":222,
+	"type":"outdoor"
 }
 
 ###
@@ -87,9 +87,9 @@ POST http://localhost:4021/view-product
 content-type: application/json
 
 {
-    "user":"sample-user",
-    "product":"sample-product"
+	"product":"sample-product"
 }
+
 ###
 # USERS ----------------------------------------------
 GET http://localhost:4021/users
@@ -152,7 +152,7 @@ POST http://localhost:4021/login-customer
 GET http://localhost:4021/cart-items
 
 ###
-GET http://localhost:4021/customer/645a536f6f19b6cd2903c174/cart-items
+GET http://localhost:4021/customer/6458ac4830a36937e74a423a/cart-items
 
 ###
 GET http://localhost:4021/cart-item/645b0dd37f01005f89a8a92c
@@ -162,7 +162,7 @@ POST http://localhost:4021/cart-item/create
 content-type: application/json
 
 {
-	"customer": "645a536f6f19b6cd2903c174", 
+	"customer": "6458ac4830a36937e74a423a", 
 	"product": "6458e591c82443471361b6b3"
 }
 
@@ -180,3 +180,85 @@ content-type: application/json
 ###
 POST http://localhost:4021/cart-item/645b0d6e7f01005f89a8a925/delete
 content-type: application/json
+
+
+###
+# CHECKOUT ----------------------------------------------
+GET http://localhost:4021/checkouts
+
+###
+GET http://localhost:4021/checkouts/6458ac4830a36937e74a423a
+
+###
+POST http://localhost:4021/checkout/create
+content-type: application/json
+
+{
+	"customer": "6458ac4830a36937e74a423a", 
+	"total_quantiy": 11,
+	"total_price": 11111,
+	"checkout_items": [
+		{
+			"_id": "645d2cdcfa1a1a64e6b022bd",
+			"customer": "6458ac4830a36937e74a423a",
+			"product": {
+				"_id": "6458e591c82443471361b6b3",
+				"name": "sample-product",
+				"description": "sample-description",
+				"price": 1111.1,
+				"category": {
+					"_id": "6458ac4830a36937e74a423a",
+					"name": "sample-yeah",
+					"description": "sample-description-yeah",
+					"createdAt": "2023-05-08T08:01:12.512Z",
+					"updatedAt": "2023-05-10T03:41:38.583Z",
+					"__v": 0,
+					"id": "6458ac4830a36937e74a423a"
+				},
+				"img_name": "sample-image",
+				"createdAt": "2023-05-08T12:05:37.545Z",
+				"updatedAt": "2023-05-08T12:05:37.545Z",
+				"__v": 0,
+				"img_url": "/images/products/sample-image",
+				"id": "6458e591c82443471361b6b3"
+			},
+			"price": 1111.1,
+			"quantity": 1,
+			"createdAt": "2023-05-11T17:58:52.232Z",
+			"updatedAt": "2023-05-11T17:58:52.232Z",
+			"__v": 0,
+			"id": "645d2cdcfa1a1a64e6b022bd"
+		},
+		{
+			"_id": "645d2ce4fa1a1a64e6b022bf",
+			"customer": "6458ac4830a36937e74a423a",
+			"product": {
+				"_id": "6458e591c82443471361b6b3",
+				"name": "sample-product",
+				"description": "sample-description",
+				"price": 1111.1,
+				"category": {
+					"_id": "6458ac4830a36937e74a423a",
+					"name": "sample-yeah",
+					"description": "sample-description-yeah",
+					"createdAt": "2023-05-08T08:01:12.512Z",
+					"updatedAt": "2023-05-10T03:41:38.583Z",
+					"__v": 0,
+					"id": "6458ac4830a36937e74a423a"
+				},
+				"img_name": "sample-image",
+				"createdAt": "2023-05-08T12:05:37.545Z",
+				"updatedAt": "2023-05-08T12:05:37.545Z",
+				"__v": 0,
+				"img_url": "/images/products/sample-image",
+				"id": "6458e591c82443471361b6b3"
+			},
+			"price": 1111.1,
+			"quantity": 1,
+			"createdAt": "2023-05-11T17:59:00.098Z",
+			"updatedAt": "2023-05-11T17:59:00.098Z",
+			"__v": 0,
+			"id": "645d2ce4fa1a1a64e6b022bf"
+		}
+	]
+}
