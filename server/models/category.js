@@ -12,7 +12,6 @@ const CategorySchema = new Schema(
   },
   {
     timestamps: true,
-    id: true,
   }
 );
 
