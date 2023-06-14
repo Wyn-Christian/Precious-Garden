@@ -6,6 +6,7 @@ const {
 
 exports.list = (req, res, next) => {
   Product.find()
+    .populate("category")
     .then((result) => res.json(result))
     .catch((error) => {
       console.log(error);
@@ -15,6 +16,7 @@ exports.list = (req, res, next) => {
 
 exports.detail = (req, res, next) => {
   Product.findById(req.params.id)
+    .populate("category")
     .then((result) => res.json(result))
     .catch((error) => {
       console.log(error);
@@ -23,14 +25,12 @@ exports.detail = (req, res, next) => {
 };
 
 exports.create = (req, res, next) => {
-  const { name, description, price, category, img_name } = req.body;
-  const product = new Product({
-    name,
-    description,
-    price,
-    category,
-    img_name,
-  });
+  const data = { ...req.body };
+  if (req.file) {
+    data.img_name = req.file.filename;
+  }
+
+  const product = new Product(data);
 
   product
     .save()
@@ -45,9 +45,12 @@ exports.create = (req, res, next) => {
 };
 
 exports.update = (req, res, next) => {
-  const product = ({ name, description, price, category, img_name } =
-    req.body);
-  Product.findByIdAndUpdate(req.params.id, product, { new: true })
+  const data = { ...req.body };
+  if (req.file) {
+    data.img_name = req.file.filename;
+  }
+
+  Product.findByIdAndUpdate(req.params.id, data, { new: true })
     .then((result) => {
       console.log("Update Product Successfully", result);
       res.json(result);
@@ -59,27 +62,12 @@ exports.update = (req, res, next) => {
 };
 
 exports.create_plant = (req, res, next) => {
-  const {
-    name,
-    description,
-    price,
-    category,
-    img_name,
-    height,
-    pot_diameter,
-    type,
-  } = req.body;
+  const data = { ...req.body };
+  if (req.file) {
+    data.img_name = req.file.filename;
+  }
 
-  const plant_product = new PlantsProduct({
-    name,
-    description,
-    price,
-    category,
-    img_name,
-    height,
-    pot_diameter,
-    type,
-  });
+  const plant_product = new PlantsProduct(data);
 
   plant_product
     .save()
@@ -94,18 +82,12 @@ exports.create_plant = (req, res, next) => {
 };
 
 exports.update_plant = (req, res, next) => {
-  const product = ({
-    name,
-    description,
-    price,
-    category,
-    img_name,
-    height,
-    pot_diameter,
-    type,
-  } = req.body);
+  const data = { ...req.body };
+  if (req.file) {
+    data.img_name = req.file.filename;
+  }
 
-  PlantsProduct.findByIdAndUpdate(req.params.id, product, { new: true })
+  PlantsProduct.findByIdAndUpdate(req.params.id, data, { new: true })
     .then((result) => {
       console.log("Update Product Successfully", result);
       res.json(result);
@@ -129,5 +111,17 @@ exports.view_product = (req, res, next) => {
     .catch((error) => {
       console.log(error);
       next(error);
+    });
+};
+
+exports.delete = (req, res, next) => {
+  Product.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      console.log("Delete Product Successfully!", result);
+      res.json({ status: "success", result });
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
     });
 };

@@ -22,6 +22,7 @@ import { useState } from "react";
 // MUI Icons
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Footer from "../Footer";
 
 const CartItemsButton = () => {
   const [totalItems, setTotalItems] = useState(4);
@@ -187,14 +188,18 @@ function ClientNavbar({ children }) {
               </Menu>
             </Box>
             <Box sx={{ flexGrow: { xs: 1, md: 0 } }}>
-              <Box component="img" src="/LOGO.png" sx={{ height: 100 }} />
+              <Box
+                component="img"
+                src="/images/LOGO.png"
+                sx={{ height: 100 }}
+              />
             </Box>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               <NavItemLink to="/" title="Home" />
               <NavItemLink to="/about-us" title="About Us" />
               <NavItemLink to="/products" title="Products" />
             </Box>
-            {user.id ? (
+            {!user.id ? (
               <UserAvatarMenu />
             ) : (
               <Box sx={{ display: "flex" }}>
@@ -205,9 +210,10 @@ function ClientNavbar({ children }) {
           </Toolbar>
         </Container>
       </AppBar>
-      <Box mt={13} minHeight="100vh">
+      <Box mt={13} minHeight="70vh" mb={6}>
         <Container>{children}</Container>
       </Box>
+      <Footer />
     </Box>
   );
 }

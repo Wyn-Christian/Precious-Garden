@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const { DateTime } = require("luxon");
 
 const CheckoutSchema = new Schema(
   {
@@ -15,13 +16,25 @@ const CheckoutSchema = new Schema(
         required: true,
       },
     ],
-    total_quantiy: {
+    total_quantity: {
       type: Number,
       required: true,
     },
     total_price: {
       type: mongoose.Types.Decimal128,
       get: getValue,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: [
+        "To Process",
+        "On Its Way",
+        "Delivered",
+        "Cancelled",
+        "Rejected",
+      ],
+      default: "To Process",
       required: true,
     },
   },
@@ -38,6 +51,11 @@ function getValue(value) {
   }
   return value;
 }
+CheckoutSchema.virtual("created_at").get(function () {
+  return this.createdAt
+    ? DateTime.fromJSDate(this.createdAt).toFormat("yyyy-MM-dd")
+    : "";
+});
 
 const CheckoutSaleSchema = new Schema(
   {

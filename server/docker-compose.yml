@@ -1,0 +1,55 @@
+version: "3.8"
+
+services:
+  mongo:
+    #Container name of mongodb
+    container_name: precious-garden-mongo
+    #Docker image from hub.docker.com
+    image: mongo
+    environment:
+      #Default username, password and database of mongodb
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: precious-garden
+    ports:
+      - 27014:27014
+    volumes:
+      #Adding volume makes sure that data is persistant and wont get deleted after your docker stops
+      #Everytime this mongodb service starts data from your system mongo-data gets replicated to /data/db folder inside docker container
+      - mongo-data:/data/pg-db
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      #Adding network makes sure that we can operate with our API's like local setup
+      - precious-garden
+
+  # api:
+  #   #Container name of your API
+  #   container_name: precious-garden-api
+  #   #Since we are building image on our own we point to the Dockerfile path
+  #   build:
+  #     #Context tell the path to look for Dockerfile
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     #We can access the API's like http://localhost:4000
+  #     - 4000:4000
+  #   volumes:
+  #     #Map your system local project files and folders to docker container /usr/app
+  #     - .:/usr/app/
+  #     - ./node_modules:/usr/app/node_modules
+  #   networks:
+  #     - precious-garden
+  #   depends_on:
+  #     - mongo
+
+#Networks are used to make sure that all the services can interoperate with ease
+networks:
+  precious-garden:
+    driver: bridge
+
+#Volumes are used to persist the data even after docker restart
+volumes:
+  mongo-data:
+    driver: local
+  # api:
+  #   driver: local

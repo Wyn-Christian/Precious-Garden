@@ -5,7 +5,6 @@ exports.list = (req, res, next) => {
     .populate({
       path: "product",
       populate: { path: "category", select: "name -_id" },
-      select: "name price category -_id",
     })
     .then((result) => res.json(result))
     .catch((error) => {
@@ -20,9 +19,7 @@ exports.list_customer = (req, res, next) => {
       path: "product",
       populate: {
         path: "category",
-        // select: "name"
       },
-      // select: "name price category",
     })
     .then((result) => res.json(result))
     .catch((error) => {
@@ -36,7 +33,6 @@ exports.detail = (req, res, next) => {
     .populate({
       path: "product",
       populate: { path: "category", select: "name" },
-      select: "name price category _id",
     })
     .then((result) => res.json(result))
     .catch((error) => {

@@ -3,16 +3,13 @@ const Schema = mongoose.Schema;
 
 const CheckoutItemSchema = new Schema(
   {
-    customer: {
-      type: mongoose.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
     product: {
       type: mongoose.Types.ObjectId,
       ref: "Product",
       required: true,
     },
+    name: String,
+    img_name: String,
     quantity: {
       type: Number,
       required: true,
@@ -30,6 +27,9 @@ const CheckoutItemSchema = new Schema(
     },
   }
 );
+CheckoutItemSchema.virtual("img_url").get(function () {
+  return `/images/products/${this.img_name}`;
+});
 function getValue(value) {
   if (typeof value !== "undefined") {
     return parseFloat(value.toString());

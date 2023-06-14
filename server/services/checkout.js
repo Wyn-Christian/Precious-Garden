@@ -1,6 +1,7 @@
 const CartItem = require("../models/cart-item");
 const Checkout = require("../models/checkout");
 const CheckoutItem = require("../models/checkout-item");
+const { Product } = require("../models/product");
 
 exports.list = (req, res, next) => {
   Checkout.find()
@@ -9,7 +10,7 @@ exports.list = (req, res, next) => {
       populate: {
         path: "product",
         populate: { path: "category", select: "name _id" },
-        select: "name price category -_id",
+        select: "name price category ",
       },
     })
     .then((result) => res.json(result))
@@ -40,7 +41,7 @@ exports.create = (req, res, next) => {
   const checkout = new Checkout({
     customer: req.body.customer,
     checkout_items: req.body.checkout_items,
-    total_quantiy: req.body.total_quantiy,
+    total_quantity: req.body.total_quantity,
     total_price: req.body.total_price,
   });
 
@@ -57,6 +58,40 @@ exports.create = (req, res, next) => {
       //   customer: req.body.customer,
       // });
       // console.log(`Deleted ${cart_delete_result.deletedCount} documents`);
+      res.json(result);
+    })
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
+};
+exports.status_change = (req, res, next) => {
+  Checkout.findByIdAndUpdate(
+    req.params.id,
+    { status: req.body.status },
+    { new: true }
+  )
+    .populate("checkout_items")
+    .then((result) => {
+      if (req.body.status === "Delivered") {
+        // update the stocks and num_sold of the product
+        result.checkout_items.forEach((item) => {
+          Product.findByIdAndUpdate(
+            item.product,
+            {
+              $inc: {
+                num_sold: item.quantity,
+                stocks: -item.quantity,
+              },
+            },
+            { new: true }
+          ).then((result) =>
+            console.log(
+              `Product ${result.name} stock and num_sold updated`
+            )
+          );
+        });
+      }
       res.json(result);
     })
     .catch((err) => {

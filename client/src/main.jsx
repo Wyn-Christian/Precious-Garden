@@ -9,6 +9,23 @@ import store from "./app/store.js";
 import { ThemeProvider } from "@mui/material/styles";
 import Root from "./routes/Root.jsx";
 import Error from "./routes/Error.jsx";
+import Dashboard from "./routes/admin/Dashboard.jsx";
+import ProductsList from "./routes/admin/products/ProductsList.jsx";
+import CustomersList from "./routes/admin/customers/CustomersList.jsx";
+import OrdersList from "./routes/admin/orders/OrdersList.jsx";
+import ProductCreate from "./routes/admin/products/ProductCreate.jsx";
+import ProductDetail from "./routes/admin/products/ProductDetail.jsx";
+import ProductUpdate from "./routes/admin/products/ProductEdit.jsx";
+import CustomerDetail from "./routes/admin/customers/CustomerDetail.jsx";
+import OrderDetail from "./routes/admin/orders/OrderDetail.jsx";
+import Home from "./routes/client/Home.jsx";
+import Products from "./routes/client/Products.jsx";
+import ProductShowcase from "./routes/client/ProductShowcase.jsx";
+import Login from "./routes/client/Login.jsx";
+import Signup from "./routes/client/Signup.jsx";
+import Orders from "./routes/client/customer/Orders.jsx";
+import CartItems from "./routes/client/customer/CartItems.jsx";
+import WishList from "./routes/client/customer/WishList.jsx";
 
 const router = createBrowserRouter([
   {
@@ -20,11 +37,7 @@ const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: <h1>Home Page</h1>,
-          },
-          {
-            path: "/about-us",
-            element: <h1>About Us Page</h1>,
+            element: <Home />,
           },
           {
             path: "/about-us",
@@ -32,23 +45,19 @@ const router = createBrowserRouter([
           },
           {
             path: "/products",
-            element: <h1>List of Products Page</h1>,
+            element: <Products />,
           },
           {
             path: "/products/:id",
-            element: <h1>Product Detail Page</h1>,
-          },
-          {
-            path: "/products/:id",
-            element: <h1>Product Detail Page</h1>,
+            element: <ProductShowcase />,
           },
           {
             path: "/login",
-            element: <h1>Login Form</h1>,
+            element: <Login />,
           },
           {
             path: "/sign-up",
-            element: <h1>Sign Up Form</h1>,
+            element: <Signup />,
           },
           {
             path: "/customer",
@@ -59,15 +68,15 @@ const router = createBrowserRouter([
               },
               {
                 path: "wishlist",
-                element: <h1>Customer&apos;s Wish List</h1>,
+                element: <WishList />,
               },
               {
                 path: "cart-items",
-                element: <h1>Customer&apos;s Cart Items</h1>,
+                element: <CartItems />,
               },
               {
                 path: "orders",
-                element: <h1>Customer&apos;s Orders</h1>,
+                element: <Orders />,
               },
             ],
           },
@@ -76,47 +85,18 @@ const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <h1>Admin root sheesh</h1>,
+                element: <Dashboard />,
               },
               {
                 path: "customers",
                 children: [
                   {
                     path: "list",
-                    element: <h1>Customers List</h1>,
+                    element: <CustomersList />,
                   },
                   {
                     path: ":id",
-                    element: <h1>Customers Detail</h1>,
-                  },
-                  {
-                    path: ":id/update",
-                    element: <h1>Customers Update</h1>,
-                  },
-                  {
-                    path: "create",
-                    element: <h1>Customers Create</h1>,
-                  },
-                ],
-              },
-              {
-                path: "categories",
-                children: [
-                  {
-                    path: "list",
-                    element: <h1>Categories List</h1>,
-                  },
-                  {
-                    path: ":id",
-                    element: <h1>Categories Detail</h1>,
-                  },
-                  {
-                    path: ":id/update",
-                    element: <h1>Categories Update</h1>,
-                  },
-                  {
-                    path: "create",
-                    element: <h1>Categories Create</h1>,
+                    element: <CustomerDetail />,
                   },
                 ],
               },
@@ -125,19 +105,19 @@ const router = createBrowserRouter([
                 children: [
                   {
                     path: "list",
-                    element: <h1>Product List</h1>,
+                    element: <ProductsList />,
                   },
                   {
                     path: ":id",
-                    element: <h1>Product Detail</h1>,
+                    element: <ProductDetail />,
                   },
                   {
                     path: ":id/update",
-                    element: <h1>Product Update</h1>,
+                    element: <ProductUpdate />,
                   },
                   {
                     path: "create",
-                    element: <h1>Product Create</h1>,
+                    element: <ProductCreate />,
                   },
                 ],
               },
@@ -146,11 +126,11 @@ const router = createBrowserRouter([
                 children: [
                   {
                     index: true,
-                    element: <h1>Orders List</h1>,
+                    element: <OrdersList />,
                   },
                   {
                     path: ":id",
-                    element: <h1>Orders Detail</h1>,
+                    element: <OrderDetail />,
                   },
                 ],
               },

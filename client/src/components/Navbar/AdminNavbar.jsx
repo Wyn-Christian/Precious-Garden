@@ -25,14 +25,12 @@ import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
 
 import PermIdentityIcon from "@mui/icons-material/PermIdentity";
-import CategoryIcon from "@mui/icons-material/Category";
-import PixIcon from "@mui/icons-material/Pix";
 
 import ViewListIcon from "@mui/icons-material/ViewList";
 import CreateIcon from "@mui/icons-material/Create";
 import GrassIcon from "@mui/icons-material/Grass";
 
-const NestedNavLinks = ({ text, Icon, handleDrawerToggle }) => {
+const NestedNavLinks = ({ text, items, Icon, handleDrawerToggle }) => {
   const [open, setOpen] = useState(false);
 
   const handleClick = () => {
@@ -56,28 +54,20 @@ const NestedNavLinks = ({ text, Icon, handleDrawerToggle }) => {
           disablePadding
           sx={{ backgroundColor: "rgba(0, 0, 0, 0.1)" }}
         >
-          <ListItemButton
-            sx={{ pl: 3.5 }}
-            LinkComponent={Link}
-            to={`/admin/${text.toLowerCase()}/list`}
-            onClick={handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <ViewListIcon color="primary" />
-            </ListItemIcon>
-            <ListItemText primary={"List"} />
-          </ListItemButton>
-          <ListItemButton
-            sx={{ pl: 3.5 }}
-            LinkComponent={Link}
-            to={`/admin/${text.toLowerCase()}/create`}
-            onClick={handleDrawerToggle}
-          >
-            <ListItemIcon>
-              <CreateIcon color="primary" />
-            </ListItemIcon>
-            <ListItemText primary={"Create"} />
-          </ListItemButton>
+          {items.map((item) => (
+            <ListItemButton
+              key={item}
+              sx={{ pl: 3.5 }}
+              LinkComponent={Link}
+              to={`/admin/${text.toLowerCase()}/${item.title.toLowerCase()}`}
+              onClick={handleDrawerToggle}
+            >
+              <ListItemIcon>
+                <item.icon color="primary" />
+              </ListItemIcon>
+              <ListItemText primary={item.title} />
+            </ListItemButton>
+          ))}
         </List>
       </Collapse>
     </List>
@@ -105,11 +95,16 @@ const AdminDrawer = ({ handleDrawerToggle }) => {
           <Divider />
           <NestedNavLinks
             text="Customers"
+            items={[{ title: "List", icon: ViewListIcon }]}
             Icon={PermIdentityIcon}
             handleDrawerToggle={handleDrawerToggle}
           />
           <NestedNavLinks
             text="Products"
+            items={[
+              { title: "List", icon: ViewListIcon },
+              { title: "Create", icon: CreateIcon },
+            ]}
             Icon={GrassIcon}
             handleDrawerToggle={handleDrawerToggle}
           />
@@ -153,7 +148,7 @@ function AdminNavbar({ children }) {
           >
             <MenuIcon />
           </IconButton>
-          <Box component="img" src="/LOGO.png" sx={{ width: 60 }} />
+          <Box component="img" src="/images/LOGO.png" sx={{ width: 60 }} />
         </Toolbar>
       </AppBar>
       <Drawer
@@ -194,6 +189,7 @@ function AdminNavbar({ children }) {
         sx={{
           flexGrow: 1,
           paddingX: 3,
+          pt: 2,
           width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` },
         }}
       >

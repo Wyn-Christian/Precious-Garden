@@ -19,14 +19,29 @@ const ProductSchema = new Schema(
       trim: true,
     },
 
+    // category: {
+    //   type: mongoose.Types.ObjectId,
+    //   required: true,
+    //   ref: "Category",
+    // },
     category: {
-      type: mongoose.Types.ObjectId,
+      type: String,
       required: true,
-      ref: "Category",
+      enum: ["plant", "pot", "soil", "tool"],
     },
     img_name: {
       type: String,
       trim: true,
+    },
+    stocks: {
+      type: Number,
+      required: true,
+      default: 1,
+    },
+    num_sold: {
+      type: Number,
+      required: true,
+      default: 0,
     },
   },
   {
@@ -53,9 +68,20 @@ const PlantsProductSchema = new Schema({
   pot_diameter: Number,
   type: {
     type: String,
-    enum: ["indoor", "outdoor"],
+    enum: ["Indoor", "Outdoor"],
     required: true,
   },
+  add_ons: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
+  light_requirements: Number,
+  humidity_needs: Number,
+  watering_needs: Number,
+  repotting: Number,
+  pet_friendly: Number,
 });
 const PlantsProduct = Product.discriminator(
   "PlantsProduct",

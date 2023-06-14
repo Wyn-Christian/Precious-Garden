@@ -4,3 +4,44 @@ export const PHPPrice = new Intl.NumberFormat("en-US", {
   currency: "PHP",
 });
 export const drawerWidth = 240;
+
+// For Admin
+export const generateCustomerData = (num) => ({
+  id: num,
+  username: `sample${num}`,
+  name: `sample-name-${num}`,
+  email: `sample${num}@gmail.com`,
+  address: `sample ${num} address`,
+  phone: `0921-${num}`,
+  img_url: `/images/sample/customer.jpg`,
+});
+
+export const generateProductData = (num) => ({
+  id: num,
+  name: `Prouct Sample ${num}`,
+  description: `Product sample description ${num}`,
+  img_url: `/images/sample/product.png`,
+  price: num % 2 ? 123 : 222,
+  category: num % 2 ? "plant" : "pot",
+  stocks: num % 2 ? 3 : 12,
+  num_sold: num % 2 ? 123 : 54,
+  status: num % 2 ? "in stocks" : "out of stocks",
+});
+
+export const generateOrderData = (num) => ({
+  id: num,
+  user: {
+    id: `user-${num}`,
+    username: `username-${num}`,
+    img_url: "/images/sample/customer.jpg",
+  },
+  checkout_items: [
+    {
+      id: `order-${num}`,
+      product: { id: `product-${num}`, name: `product-name-${num}` },
+    },
+  ],
+  status: num % 2 ? "on its way" : "delivered",
+  total_price: num % 2 ? 1234.23 : 4423.32,
+  total_quantity: num % 2 ? 3 : 13,
+});

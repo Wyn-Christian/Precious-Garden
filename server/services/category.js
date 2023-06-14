@@ -17,10 +17,7 @@ exports.detail = (req, res, next) => {
 };
 
 exports.create = (req, res, next) => {
-  const category = new Category({
-    name: req.body.name,
-    description: req.body.description,
-  });
+  const category = new Category(req.body);
 
   category
     .save()
@@ -28,20 +25,22 @@ exports.create = (req, res, next) => {
       console.log("Create Category Successfully", result);
       res.json(result);
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 };
 
 exports.update = (req, res, next) => {
-  const category = {
-    name: req.body.name,
-    description: req.body.description,
-  };
-  Category.findByIdAndUpdate(req.params.id, category, { new: true })
+  Category.findByIdAndUpdate(req.params.id, req.body, { new: true })
     .then((result) => {
       console.log("Update Category Successfully", result);
       res.json(result);
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 };
 
 exports.delete = (req, res, next) => {
@@ -50,5 +49,8 @@ exports.delete = (req, res, next) => {
       console.log("Delete Category Successfully", result);
       res.json(result);
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      console.log(err);
+      next(err);
+    });
 };

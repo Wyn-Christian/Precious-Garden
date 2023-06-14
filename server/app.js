@@ -25,12 +25,13 @@ mongoose
   .connect(process.env.MONGODB_URI || mongodbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    dbName: "precious-garden",
   })
   .then(() => console.log("Connected Successfully"))
   .catch((err) => {
     console.error(err);
   });
-const db = mongoose.connection;
+let db = mongoose.connection;
 
 // MIDDLEWARES
 app.use(helmet());
@@ -59,7 +60,10 @@ app.use(function (err, req, res, next) {
 
   // render the error page
   res.status(err.status || 500);
-  res.json("error");
+  console.error(err.stack);
+  res.json({
+    error: err.message,
+  });
 });
 
 module.exports = app;

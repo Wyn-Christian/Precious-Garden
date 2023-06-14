@@ -15,7 +15,8 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
-    type: {
+    img_name: String,
+    position: {
       type: String,
       enum: ["admin", "customer"],
       required: true,
@@ -25,6 +26,9 @@ const UserSchema = new Schema(
     timestamps: true,
   }
 );
+UserSchema.virtual("img_url").get(function () {
+  return `/images/users/${this.img_name}`;
+});
 const User = mongoose.model("User", UserSchema);
 
 const CustomerSchema = new Schema({
@@ -37,6 +41,14 @@ const CustomerSchema = new Schema({
     enum: ["non-verified", "verified", "blocked"],
     default: "non-verified",
   },
+  phone: String,
+  address: String,
+  wishlist: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Product",
+    },
+  ],
 });
 const Customer = User.discriminator("Customer", CustomerSchema);
 
