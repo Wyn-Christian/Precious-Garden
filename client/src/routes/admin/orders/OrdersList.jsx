@@ -1,5 +1,9 @@
 import { Link } from "react-router-dom";
-import { PHPPrice, generateOrderData } from "../../../app/utils";
+import {
+  PHPPrice,
+  api_base_url,
+  generateOrderData,
+} from "../../../app/utils";
 
 import {
   Avatar,
@@ -16,12 +20,13 @@ import { DataGrid } from "@mui/x-data-grid";
 import AdminTitle from "../../../components/AdminTitle";
 import ViewAction from "../../../components/ViewAction";
 import StatusInfo from "../../../components/StatusInfo";
+import { useGetCheckoutsQuery } from "../../../app/services/checkout";
 
-const UserData = ({ row }) => (
+const CustomerData = ({ row }) => (
   <Stack direction="row" spacing={1} m="auto">
     {/* <Avatar src={`${api_base_url}${row.user.image_url}`} /> */}
-    <Avatar src={`${row.user.img_url}`} />
-    <Typography alignSelf="center">{row.user.username}</Typography>
+    <Avatar src={`${api_base_url}${row.customer.img_url}`} />
+    <Typography alignSelf="center">{row.customer.username}</Typography>
   </Stack>
 );
 
@@ -35,7 +40,7 @@ const columns = [
     headerName: "User",
     width: 200,
     headerAlign: "center",
-    renderCell: (params) => <UserData {...params} />,
+    renderCell: (params) => <CustomerData {...params} />,
     // format: (user) => user,
     // valueFormatter: (user) => user.value.username,
   },
@@ -71,12 +76,13 @@ const columns = [
 ];
 
 function OrdersList() {
+  const { data: checkouts = [] } = useGetCheckoutsQuery();
   return (
     <Box>
       <AdminTitle title="List of Orders" />
       <DataGrid
         rowHeight={90}
-        rows={orderSampleData}
+        rows={checkouts}
         columns={columns}
         pageSizeOptions={[5, 10, 25]}
         initialState={{

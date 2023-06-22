@@ -1,4 +1,10 @@
+import {
+  PHPPrice,
+  api_base_url,
+  generateProductData,
+} from "../../../app/utils";
 import { Link } from "react-router-dom";
+
 import {
   Box,
   Button,
@@ -8,17 +14,19 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+
+// Custom Components
 import AdminTitle from "../../../components/AdminTitle";
-import { PHPPrice, generateProductData } from "../../../app/utils";
 import ViewAction from "../../../components/ViewAction";
 import CategoryInfo from "../../../components/CategoryInfo";
+import { useGetProductsQuery } from "../../../app/services/product";
 
 const ImageColumn = ({ row }) => {
   return (
     <Paper sx={{ m: "auto" }}>
       <CardMedia
-        // image={`${api_base_url}${row.image_url}`}
-        image={`${row.img_url}`}
+        image={`${api_base_url}${row.img_url}`}
+        // image={`${row.img_url}`}
         sx={{
           height: 70,
           width: 70,
@@ -72,12 +80,13 @@ const columns = [
 ];
 
 function ProductsList() {
+  const { data = [] } = useGetProductsQuery();
   return (
     <Box>
       <AdminTitle title="List of Products" />
       <DataGrid
         rowHeight={100}
-        rows={productSampleData}
+        rows={data}
         columns={columns}
         pageSizeOptions={[5, 10, 25]}
         initialState={{

@@ -1,4 +1,9 @@
-import { PHPPrice } from "../../../app/utils";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../../features/userSlice";
+import { PHPPrice, api_base_url } from "../../../app/utils";
+import { enqueueSnackbar } from "notistack";
+import { Link, useNavigate } from "react-router-dom";
+
 import {
   Box,
   Button,
@@ -13,7 +18,36 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 
-const CartItem = () => {
+import {
+  useGetCartByUserQuery,
+  useRemoveToCartMutation,
+  useUpdateCartMutation,
+} from "../../../app/services/cart-item";
+import { useCreateCheckoutMutation } from "../../../app/services/checkout";
+
+const CartItem = ({ i, id, product, quantity }) => {
+  const [updateCart] = useUpdateCartMutation();
+  const [removeToCart] = useRemoveToCartMutation();
+
+  const increaseQuantity = async () => {
+    if (quantity + 1 <= product.stocks) {
+      let data = { id, data: { quantity: quantity + 1 } };
+      await updateCart(data).unwrap();
+    } else {
+      enqueueSnackbar("Stock maxed out...", { preventDuplicate: true });
+    }
+  };
+  const decreaseQuantity = async () => {
+    if (quantity - 1 !== 0) {
+      let data = { id, data: { quantity: quantity - 1 } };
+      await updateCart(data).unwrap();
+    }
+  };
+  const deleteCart = async () => {
+    await removeToCart(id).then((res) => {
+      enqueueSnackbar("Cart Item Deleted", { variant: "success" });
+    });
+  };
   return (
     <Box
       sx={{
@@ -29,12 +63,12 @@ const CartItem = () => {
           alignSelf="center"
           sx={{ mx: { xs: 1, md: 5 } }}
         >
-          1
+          {i}
         </Typography>
 
         <Paper>
           <CardMedia
-            image="/images/sample/product.png"
+            image={`${api_base_url}${product.img_url}`}
             sx={{
               width: { xs: 150, md: 100 },
               height: { xs: 150, md: 100 },
@@ -44,11 +78,18 @@ const CartItem = () => {
         </Paper>
 
         <Box ml={2}>
-          <Typography variant="h6" fontWeight="bold">
-            Description
+          <Typography
+            variant="h6"
+            fontWeight="bold"
+            width={{ xs: 175, md: "100%" }}
+            component={Link}
+            to={`/products/${product.id}`}
+            sx={{ textDecoration: "none", color: "inherit" }}
+          >
+            {product.name}
           </Typography>
-          <Typography>Plant</Typography>
-          <Typography>Price: {PHPPrice.format(100)}</Typography>
+          <Typography>{product.category}</Typography>
+          <Typography>Price: {PHPPrice.format(product.price)}</Typography>
         </Box>
       </Box>
       <Stack
@@ -59,8 +100,8 @@ const CartItem = () => {
       >
         <Typography fontWeight="bold">Quantity:</Typography>
         <ButtonGroup variant="contained" disableElevation>
-          <Button>
-            <AddIcon />
+          <Button onClick={decreaseQuantity}>
+            <RemoveIcon />
           </Button>
           <Box
             sx={{
@@ -70,12 +111,12 @@ const CartItem = () => {
               mx: 2,
             }}
           >
-            1
+            {quantity}
           </Box>
-          <Button>
-            <RemoveIcon />
+          <Button onClick={increaseQuantity}>
+            <AddIcon />
           </Button>
-          <Button color="error">
+          <Button color="error" onClick={deleteCart}>
             <DeleteIcon />
           </Button>
         </ButtonGroup>
@@ -85,15 +126,54 @@ const CartItem = () => {
 };
 
 function CartItems() {
+  const navigate = useNavigate();
+
+  const user = useSelector(userSelector);
+  const { data: cart_items = [] } = useGetCartByUserQuery(user.id);
+
+  const [createCheckout] = useCreateCheckoutMutation();
+
+  const checkOutClicked = async () => {
+    if (cart_items.length > 0) {
+      const data = { customer: user.id };
+      data.checkout_items = cart_items.map((item) => {
+        return {
+          ...item,
+          name: item.product.name,
+          img_name: item.product.img_name,
+          price: item.product.price,
+        };
+      });
+      data.total_quantity = cart_items.reduce((total, item) => {
+        return total + item.quantity;
+      }, 0);
+      data.total_price = cart_items.reduce((total, item) => {
+        return total + item.product.price * item.quantity;
+      }, 0);
+
+      await createCheckout(data)
+        .then((res) => {
+          console.log("Create Order successfully", res);
+          enqueueSnackbar("Create Order successfully", {
+            variant: "success",
+          });
+          navigate("/customer/orders");
+        })
+        .catch((err) => console.log(err));
+    } else {
+      enqueueSnackbar("Your cart is currently empty...");
+    }
+  };
+
   return (
     <Box mt={20}>
       <Typography variant="h3" textAlign="center" mb={3}>
         YOUR CART ITEMS
       </Typography>
       <Stack spacing={2}>
-        <CartItem />
-        <CartItem />
-        <CartItem />
+        {cart_items.map((cart, i) => (
+          <CartItem key={cart.id} i={i + 1} {...cart} />
+        ))}
       </Stack>
       <Box mt={3}>
         <Typography variant="h4" textAlign="center" fontWeight="bold">
@@ -101,25 +181,38 @@ function CartItems() {
         </Typography>
         <Stack alignItems="center">
           <Stack direction="row" alignItems="center" spacing={1.2}>
-            <Typography variant="h5" textAlign="right" width={150}>
+            <Typography variant="h5" textAlign="right" width={160}>
               Total Price:
             </Typography>
             <Typography width={140} fontSize={23}>
-              {PHPPrice.format(1000)}
+              {PHPPrice.format(
+                cart_items.reduce(
+                  (total, item) =>
+                    total + item.product.price * item.quantity,
+                  0
+                )
+              )}
             </Typography>
           </Stack>
           <Stack direction="row" alignItems="center" spacing={1.2}>
-            <Typography variant="h5" textAlign="right" width={150}>
+            <Typography variant="h5" textAlign="right" width={160}>
               Total Quantity:
             </Typography>
             <Typography width={140} fontSize={23}>
-              13
+              {cart_items.reduce(
+                (total, item) => total + item.quantity,
+                0
+              )}
             </Typography>
           </Stack>
         </Stack>
 
         <Box sx={{ display: "flex", mt: 3 }}>
-          <Button variant="contained" sx={{ margin: "auto" }}>
+          <Button
+            variant="contained"
+            sx={{ margin: "auto" }}
+            onClick={checkOutClicked}
+          >
             Checkout Items
           </Button>
         </Box>

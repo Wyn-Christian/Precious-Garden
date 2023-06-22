@@ -6,9 +6,23 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 
 import ProductCard from "../../components/ProductCart";
+import { useGetProductsQuery } from "../../app/services/product";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../features/userSlice";
+import { useGetWishlistByUserQuery } from "../../app/services/wishlist";
 
 function Products() {
-  const [category, setCategory] = useState("all products");
+  const [category, setCategory] = useState("All");
+  const {
+    data: products = [],
+    isLoading,
+    isSuccess,
+  } = useGetProductsQuery();
+
+  const user = useSelector(userSelector);
+
+  const { data: wishlist = [] } = useGetWishlistByUserQuery(user.id);
+  console.log(wishlist);
 
   const handleCategory = (event, newCategory) => {
     setCategory(newCategory);
@@ -37,18 +51,28 @@ function Products() {
             m: { xs: "auto", md: 0 },
           }}
         >
-          {["All Products", "Plants", "Pots", "Soils", "Tools"].map(
-            (cat) => (
-              <ToggleButton key={cat} value={cat.toLowerCase()}>
-                {cat}
-              </ToggleButton>
-            )
-          )}
+          {[
+            { name: "All Products", value: "All" },
+            { name: "Plants", value: "Plant" },
+            { name: "Pots", value: "Pot" },
+            { name: "Soils", value: "Soil" },
+            { name: "Tools", value: "Tool" },
+          ].map((cat) => (
+            <ToggleButton key={cat.name} value={cat.value}>
+              {cat.name}
+            </ToggleButton>
+          ))}
         </ToggleButtonGroup>
         <Grid container spacing={3}>
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <ProductCard key={i} />
-          ))}
+          {products
+            .filter((p) => p.category === category || category === "All")
+            .map((product) => (
+              <ProductCard
+                key={product.id}
+                {...product}
+                isWishlist={wishlist.includes(product.id)}
+              />
+            ))}
         </Grid>
       </Stack>
     </Box>

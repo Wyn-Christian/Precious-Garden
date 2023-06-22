@@ -2,17 +2,18 @@ import { Box, Chip } from "@mui/material";
 
 const CategoryInfo = ({ row }) => {
   let content;
+
   switch (row.category) {
-    case "plant":
+    case "Plant":
       content = <Chip sx={{ backgroundColor: "#C7E9B0" }} label="Plant" />;
       break;
-    case "pot":
+    case "Pot":
       content = <Chip sx={{ backgroundColor: "#BAD1C2" }} label="Pot" />;
       break;
-    case "soil":
+    case "Soil":
       content = <Chip sx={{ backgroundColor: "#FFD495" }} label="Soil" />;
       break;
-    case "tool":
+    case "Tool":
       content = <Chip sx={{ backgroundColor: "#EAE0DA" }} label="Tool" />;
       break;
   }

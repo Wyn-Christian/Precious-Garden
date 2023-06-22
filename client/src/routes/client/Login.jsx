@@ -1,3 +1,9 @@
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import { useEffect } from "react";
+import { enqueueSnackbar } from "notistack";
+
 import {
   Box,
   Button,
@@ -6,8 +12,43 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useLoginUserMutation } from "../../app/services/user";
+import { setUser } from "../../features/userSlice";
 
 function Login() {
+  const [loginUser, { data }] = useLoginUserMutation();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+  });
+
+  const onSubmit = async () => {
+    console.log(formik.values);
+    await loginUser(formik.values);
+  };
+
+  useEffect(() => {
+    if (data) {
+      if (data.id) {
+        dispatch(setUser(data));
+        enqueueSnackbar("Login Successfully", { variant: "success" });
+        navigate("/");
+      } else {
+        enqueueSnackbar("Wrong input email or password", {
+          variant: "warning",
+          preventDuplicate: true,
+        });
+
+        console.log(data.error);
+      }
+    }
+  }, [data]);
+
   return (
     <Box
       sx={{
@@ -42,9 +83,25 @@ function Login() {
         <Paper sx={{ width: { xs: "100%", sm: 400 } }} elevation={0}>
           <Box component="form">
             <Stack spacing={3}>
-              <TextField label="Email" variant="filled" fullWidth />
-              <TextField label="Password" variant="filled" fullWidth />
-              <Button variant="contained">Login</Button>
+              <TextField
+                label="Email"
+                name="email"
+                value={formik.values.email}
+                onChange={formik.handleChange}
+                variant="filled"
+                fullWidth
+              />
+              <TextField
+                label="Password"
+                name="password"
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                variant="filled"
+                fullWidth
+              />
+              <Button variant="contained" onClick={onSubmit}>
+                Login
+              </Button>
             </Stack>
           </Box>
         </Paper>

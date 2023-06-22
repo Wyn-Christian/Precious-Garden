@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import Grid from "@mui/material/Unstable_Grid2";
 import {
   Box,
+  Button,
   Divider,
   FormControl,
   InputLabel,
@@ -33,7 +34,15 @@ import YardOutlinedIcon from "@mui/icons-material/YardOutlined";
 import YardIcon from "@mui/icons-material/Yard";
 import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import PetsIcon from "@mui/icons-material/Pets";
+import {
+  useCreatePlantProductMutation,
+  useCreateProductMutation,
+} from "../../../app/services/product";
 function ProductCreate() {
+  const navigate = useNavigate();
+  const [createProduct] = useCreateProductMutation();
+  const [createPlantProduct] = useCreatePlantProductMutation();
+
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -41,7 +50,7 @@ function ProductCreate() {
       image: null,
       price: 0,
       stocks: 10,
-      category: "plant",
+      category: "Plant",
       type: "Indoor",
       height: 11,
       pot_diameter: 9,
@@ -54,6 +63,52 @@ function ProductCreate() {
       add_ons_pot: null,
     },
   });
+
+  const onSubmit = async () => {
+    const new_product = new FormData();
+    new_product.append("name", formik.values.name);
+    new_product.append("description", formik.values.description);
+    new_product.append("category", formik.values.category);
+    new_product.append("price", formik.values.price);
+    new_product.append("stocks", formik.values.stocks);
+    new_product.append("type", formik.values.type);
+    new_product.append("image", formik.values.image);
+    new_product.append("height", formik.values.height);
+    new_product.append("pot_diameter", formik.values.pot_diameter);
+    new_product.append(
+      "light_requirements",
+      Number(formik.values.light_requirements)
+    );
+    new_product.append(
+      "humidity_needs",
+      Number(formik.values.humidity_needs)
+    );
+    new_product.append(
+      "watering_needs",
+      Number(formik.values.watering_needs)
+    );
+    new_product.append("repotting", Number(formik.values.repotting));
+    new_product.append("pet_friendly", Number(formik.values.pet_friendly));
+
+    if (formik.values.category !== "Plant") {
+      await createProduct(new_product)
+        .unwrap()
+        .then((res) => {
+          console.log("Create Product Successfully", res);
+          navigate(`/admin/products/${res.id}`);
+        })
+        .catch((err) => console.error(err));
+    } else {
+      await createPlantProduct(new_product)
+        .unwrap()
+        .then((res) => {
+          console.log("Create Plant Product Successfully", res);
+          navigate(`/admin/products/${res.id}`);
+        })
+        .catch((err) => console.error(err));
+    }
+  };
+
   return (
     <Box>
       <AdminTitle title="Create Product" />
@@ -144,7 +199,7 @@ function ProductCreate() {
                     onChange={formik.handleChange}
                   >
                     {["Plant", "Pot", "Soil", "Tool"].map((name) => (
-                      <MenuItem key={name} value={name.toLowerCase()}>
+                      <MenuItem key={name} value={name}>
                         {name}
                       </MenuItem>
                     ))}
@@ -154,7 +209,7 @@ function ProductCreate() {
             </Paper>
           </Grid>
 
-          {formik.values.category === "plant" && (
+          {formik.values.category === "Plant" && (
             <Grid xs={12} md={6}>
               <Paper elevation={4}>
                 <Typography variant="h5" sx={{ px: 2, py: 1.5 }}>
@@ -184,7 +239,7 @@ function ProductCreate() {
             </Grid>
           )}
 
-          {formik.values.category === "plant" && (
+          {/* {formik.values.category === "Plant" && (
             <Grid xs={12} md={6}>
               <Paper elevation={4} sx={{ mb: 3 }}>
                 <Typography variant="h5" sx={{ px: 2, py: 1.5 }}>
@@ -259,9 +314,9 @@ function ProductCreate() {
                 </Box>
               </Paper>
             </Grid>
-          )}
+          )} */}
 
-          {formik.values.category === "plant" && (
+          {formik.values.category === "Plant" && (
             <Grid xs={12} md={6}>
               <Paper elevation={4}>
                 <Typography variant="h5" sx={{ px: 2, py: 1.5 }}>
@@ -338,6 +393,15 @@ function ProductCreate() {
               </Paper>
             </Grid>
           )}
+          <Grid xs={12}>
+            <Button
+              variant="contained"
+              sx={{ width: { xs: "100%", md: 200 } }}
+              onClick={onSubmit}
+            >
+              Create Product
+            </Button>
+          </Grid>
         </Grid>
       </Box>
     </Box>

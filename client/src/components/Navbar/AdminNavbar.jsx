@@ -19,7 +19,6 @@ import {
 
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import MenuIcon from "@mui/icons-material/Menu";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
@@ -56,7 +55,7 @@ const NestedNavLinks = ({ text, items, Icon, handleDrawerToggle }) => {
         >
           {items.map((item) => (
             <ListItemButton
-              key={item}
+              key={item.title}
               sx={{ pl: 3.5 }}
               LinkComponent={Link}
               to={`/admin/${text.toLowerCase()}/${item.title.toLowerCase()}`}

@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import {
   Box,
@@ -16,30 +16,40 @@ import Grid from "@mui/material/Unstable_Grid2";
 import AdminTitle from "../../../components/AdminTitle";
 import DetailTitle from "../../../components/DetailTitle";
 import DetailInfo from "../../../components/DetailInfo";
-import { PHPPrice } from "../../../app/utils";
+import { PHPPrice, api_base_url } from "../../../app/utils";
 import { useState, useEffect } from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import CategoryInfo from "../../../components/CategoryInfo";
+import {
+  useChangeStatusOrderMutation,
+  useGetCheckoutQuery,
+} from "../../../app/services/checkout";
+import LoadingProgress from "../../../components/LoadingProgress";
+import { enqueueSnackbar } from "notistack";
 
 const StatusOrder = ({ status }) => {
   const [isDisabled, setIsDisabled] = useState(false);
   const [currentStatus, setCurrentStatus] = useState(status);
   const handleChange = (e) => setCurrentStatus(e.target.value);
   const { id } = useParams();
-  // const [changeStatusOrder] = useChangeStatusOrderMutation();
+  const [changeStatusOrder] = useChangeStatusOrderMutation();
 
-  // const handleSaveClick = async () => {
-  //   await changeStatusOrder({ id, data: { status: currentStatus } }).then(
-  //     (res) => {
-  //       console.log("Status Changed successfully", res);
-  //     }
-  //   );
-  // };
-  // useEffect(() => {
-  //   if (status === "delivered" || status === "cancelled") {
-  //     setIsDisabled(true);
-  //   }
-  // }, [status]);
+  const handleSaveClick = async () => {
+    await changeStatusOrder({ id, data: { status: currentStatus } }).then(
+      (res) => {
+        console.log("Status Changed successfully", res);
+        enqueueSnackbar("Status Changed successfully", {
+          variant: "success",
+        });
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (status === "Delivered" || status === "Cancelled") {
+      setIsDisabled(true);
+    }
+  }, [status]);
 
   return (
     <Paper elevation={3}>
@@ -57,6 +67,7 @@ const StatusOrder = ({ status }) => {
             id="status"
             value={currentStatus}
             onChange={handleChange}
+            readOnly={isDisabled}
           >
             <MenuItem value={"To Process"}>
               <Chip label="To Process" color="warning" />
@@ -75,7 +86,7 @@ const StatusOrder = ({ status }) => {
         <Button
           variant="contained"
           disabled={isDisabled}
-          // onClick={handleSaveClick}
+          onClick={handleSaveClick}
         >
           Save
         </Button>
@@ -88,12 +99,27 @@ const ImageColumn = ({ row }) => {
   return (
     <Paper sx={{ m: "auto" }}>
       <CardMedia
-        image={`/images/sample/product.png`}
-        sx={{ height: 60, width: 60 }}
+        image={`${api_base_url}${row.img_url}`}
+        sx={{
+          height: 60,
+          width: 60,
+          backgroundColor: (t) => t.palette.primary.main,
+        }}
       />
     </Paper>
   );
 };
+
+const ProductColumn = ({ product, name }) => (
+  <Typography
+    component={Link}
+    to={`/admin/products/${product.id}`}
+    sx={{ textDecoration: "none", color: "inherit" }}
+    fontWeight="bold"
+  >
+    {name}
+  </Typography>
+);
 
 const columns = [
   {
@@ -106,8 +132,9 @@ const columns = [
   {
     field: "product",
     headerName: "Product",
-    width: 200,
-    valueFormatter: (product) => product.value.name,
+    width: 400,
+    // valueFormatter: (product) => <h1>{product.value.name}</h1>,
+    renderCell: (params) => <ProductColumn {...params.row} />,
   },
   {
     field: "price",
@@ -127,79 +154,99 @@ const columns = [
     headerName: "Category",
     width: 125,
     headerAlign: "center",
-    renderCell: (params) => <CategoryInfo {...params} />,
+    renderCell: (params) => <CategoryInfo row={params.row.product} />,
   },
 ];
 
 function OrderDetail() {
   const { id } = useParams();
-  return (
-    <Box>
-      <AdminTitle title="Order Detail" />
-      <Box>
-        <Typography variant="overline">ORDER ID:</Typography>
-        <Chip label={id} />
-      </Box>
+  const {
+    data: checkout = {},
+    isLoading,
+    isSuccess,
+  } = useGetCheckoutQuery(id);
 
-      <Grid container spacing={4}>
-        <Grid xs={12} md={6}>
-          <Paper elevation={3}>
-            <DetailTitle title="Customer Info" />
-            <DetailInfo title="Full Name" value="Sample Name" />
-            <DetailInfo title="Username" value="Sample Username" />
-            <DetailInfo title="Email" value="Sample@email.com" />
-          </Paper>
-        </Grid>
-        <Grid xs={12} md={6}>
-          <Paper elevation={3}>
-            <DetailTitle title="Contact Info" />
-            <DetailInfo title="Phone Number" value="091234553" />
-            <DetailInfo
-              title="Address"
-              value="Sample user address sheeeesh"
+  let content;
+  if (isLoading) {
+    content = <LoadingProgress />;
+  } else if (isSuccess) {
+    content = (
+      <Box>
+        <AdminTitle title="Order Detail" />
+        <Box>
+          <Typography variant="overline">ORDER ID:</Typography>
+          <Chip label={id} />
+        </Box>
+
+        <Grid container spacing={4}>
+          <Grid xs={12} md={6}>
+            <Paper elevation={3}>
+              <DetailTitle title="Customer Info" />
+              <DetailInfo
+                title="Full Name"
+                value={checkout.customer.name}
+              />
+              <DetailInfo
+                title="Username"
+                value={checkout.customer.username}
+              />
+              <DetailInfo title="Email" value={checkout.customer.email} />
+            </Paper>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Paper elevation={3}>
+              <DetailTitle title="Contact Info" />
+              <DetailInfo
+                title="Phone Number"
+                value={checkout.customer.phone}
+              />
+              <DetailInfo
+                title="Address"
+                value={checkout.customer.address}
+              />
+            </Paper>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Paper elevation={3}>
+              <DetailTitle title="Order Info" />
+              <DetailInfo
+                title="Date of order"
+                value={checkout.created_at}
+              />
+              <DetailInfo
+                title="Total Price"
+                value={PHPPrice.format(checkout.total_price)}
+              />
+              <DetailInfo
+                title="Total Quantity"
+                value={checkout.total_quantity}
+              />
+            </Paper>
+          </Grid>
+          <Grid xs={12}>
+            <StatusOrder status={checkout.status} />
+          </Grid>
+          <Grid xs={12}>
+            <DataGrid
+              rowHeight={100}
+              rows={checkout.checkout_items}
+              columns={columns}
+              pageSizeOptions={[5, 10, 25]}
+              initialState={{
+                pagination: { paginationModel: { pageSize: 5 } },
+              }}
+              sx={{
+                boxShadow: 2,
+                border: 1,
+              }}
             />
-          </Paper>
+          </Grid>
         </Grid>
-        <Grid xs={12} md={6}>
-          <Paper elevation={3}>
-            <DetailTitle title="Order Info" />
-            <DetailInfo title="Date of order" value="Sat, May 27, 2023" />
-            <DetailInfo
-              title="Total Price"
-              value={PHPPrice.format(1000)}
-            />
-            <DetailInfo title="Total Quantity" value={12} />
-          </Paper>
-        </Grid>
-        <Grid xs={12}>
-          <StatusOrder status="To Process" />
-        </Grid>
-        <Grid xs={12}>
-          <DataGrid
-            rowHeight={100}
-            rows={[
-              {
-                id: 1,
-                product: "hello",
-                price: 100,
-                quantity: 1,
-                category: "plant",
-              },
-            ]}
-            columns={columns}
-            pageSizeOptions={[5, 10, 25]}
-            initialState={{
-              pagination: { paginationModel: { pageSize: 5 } },
-            }}
-            sx={{
-              boxShadow: 2,
-              border: 1,
-            }}
-          />
-        </Grid>
-      </Grid>
-    </Box>
-  );
+      </Box>
+    );
+  }
+
+  return <Box>{content}</Box>;
 }
 
 export default OrderDetail;

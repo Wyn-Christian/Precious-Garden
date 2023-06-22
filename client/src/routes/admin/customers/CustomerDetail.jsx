@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import { useGetUserQuery } from "../../../app/services/user";
 
 import {
   Avatar,
@@ -12,54 +13,68 @@ import {
 import AdminTitle from "../../../components/AdminTitle";
 import DetailTitle from "../../../components/DetailTitle";
 import DetailInfo from "../../../components/DetailInfo";
+import LoadingProgress from "../../../components/LoadingProgress";
+import { api_base_url } from "../../../app/utils";
 
 function CustomerDetail() {
   const { id } = useParams();
-  return (
-    <Box>
-      <AdminTitle title="Customer Detail" />
+  const {
+    data: customer = {},
+    isLoading,
+    isSuccess,
+  } = useGetUserQuery(id);
+  let content;
+  if (isLoading) {
+    content = <LoadingProgress />;
+  } else if (isSuccess) {
+    content = (
       <Box>
-        <Typography variant="overline">CUSTOMER ID:</Typography>
-        <Chip label={id} />
-      </Box>
-      <Stack
-        direction={{ xs: "column", md: "row-reverse" }}
-        justifyContent={{ md: "space-evenly" }}
-        spacing={3}
-        mt={3}
-        height={500}
-      >
+        <AdminTitle title="Customer Detail" />
         <Box>
-          <Avatar
-            src={`/images/sample/customer.jpg`}
-            sx={{
-              width: { xs: 300, sm: 200, md: 250 },
-              height: { xs: 300, sm: 200, md: 250 },
-              position: { md: "sticky" },
-              top: { md: 85 },
-              m: { xs: "auto", md: 0 },
-            }}
-          />
+          <Typography variant="overline">CUSTOMER ID:</Typography>
+          <Chip label={id} />
         </Box>
-        <Stack direction="column" spacing={2} sx={{ width: { md: 600 } }}>
-          <Paper>
-            <DetailTitle title="Account Info" />
-            <DetailInfo title="Full Name" value="Sample Name" />{" "}
-            <DetailInfo title="Username" value="Sample User Name" />{" "}
-            <DetailInfo title="Email" value="Sample@email.com" />{" "}
-          </Paper>
-          <Paper>
-            <DetailTitle title="Contact Info" />
-            <DetailInfo title="Phone number" value="092109219" />{" "}
-            <DetailInfo
-              title="Address"
-              value="Sample User Addresss omgahd"
+        <Stack
+          direction={{ xs: "column", md: "row-reverse" }}
+          justifyContent={{ md: "space-evenly" }}
+          spacing={3}
+          mt={3}
+          height={500}
+        >
+          <Box>
+            <Avatar
+              src={`${api_base_url}${customer.img_url}`}
+              sx={{
+                width: { xs: 300, sm: 200, md: 250 },
+                height: { xs: 300, sm: 200, md: 250 },
+                position: { md: "sticky" },
+                top: { md: 85 },
+                m: { xs: "auto", md: 0 },
+              }}
             />
-          </Paper>
+          </Box>
+          <Stack
+            direction="column"
+            spacing={2}
+            sx={{ width: { md: 600 } }}
+          >
+            <Paper>
+              <DetailTitle title="Account Info" />
+              <DetailInfo title="Full Name" value={customer.name} />
+              <DetailInfo title="Username" value={customer.username} />
+              <DetailInfo title="Email" value={customer.email} />
+            </Paper>
+            <Paper>
+              <DetailTitle title="Contact Info" />
+              <DetailInfo title="Phone number" value={customer.phone} />
+              <DetailInfo title="Address" value={customer.address} />
+            </Paper>
+          </Stack>
         </Stack>
-      </Stack>
-    </Box>
-  );
+      </Box>
+    );
+  }
+  return <Box>{content}</Box>;
 }
 
 export default CustomerDetail;

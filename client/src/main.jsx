@@ -6,6 +6,8 @@ import { Provider } from "react-redux";
 import theme from "./app/theme.jsx";
 import store from "./app/store.js";
 
+import { SnackbarProvider } from "notistack";
+
 import { ThemeProvider } from "@mui/material/styles";
 import Root from "./routes/Root.jsx";
 import Error from "./routes/Error.jsx";
@@ -146,6 +148,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <Provider store={store}>
+        <SnackbarProvider />
         <RouterProvider router={router} />
       </Provider>
     </ThemeProvider>

@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { api_base_url, generateCustomerData } from "../../../app/utils";
+
 import {
   Avatar,
   Box,
@@ -9,27 +11,15 @@ import {
   Typography,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+
 import AdminTitle from "../../../components/AdminTitle";
-import { PHPPrice, generateCustomerData } from "../../../app/utils";
 import ViewAction from "../../../components/ViewAction";
+import { useGetCustomersQuery } from "../../../app/services/user";
 
 const ImageColumn = ({ row }) => {
-  // return (
-  //   <Paper sx={{ m: "auto" }}>
-  //     <CardMedia
-  //       // image={`${api_base_url}${row.image_url}`}
-  //       image={`${row.img_url}`}
-  //       sx={{
-  //         height: 70,
-  //         width: 70,
-  //         backgroundColor: (theme) => theme.palette.primary.main,
-  //       }}
-  //     />
-  //   </Paper>
-  // );
   return (
     <Avatar
-      src={`${row.img_url}`}
+      src={`${api_base_url}${row.img_url}`}
       sx={{ m: "auto", width: 60, height: 60 }}
     />
   );
@@ -62,12 +52,13 @@ const columns = [
 ];
 
 function CustomersList() {
+  const { data: customers = [] } = useGetCustomersQuery();
   return (
     <Box>
       <AdminTitle title="List of Customers" />
       <DataGrid
         rowHeight={90}
-        rows={customerSampleData}
+        rows={customers}
         columns={columns}
         pageSizeOptions={[5, 10, 25]}
         initialState={{

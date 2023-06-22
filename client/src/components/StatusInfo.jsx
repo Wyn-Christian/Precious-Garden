@@ -3,16 +3,16 @@ import { Box, Chip } from "@mui/material";
 const StatusInfo = ({ row }) => {
   let content;
   switch (row.status) {
-    case "to process":
+    case "To Process":
       content = <Chip label="To Process" color="warning" />;
       break;
-    case "on its way":
+    case "On Its Way":
       content = <Chip label="On Its Way" color="info" />;
       break;
-    case "delivered":
+    case "Delivered":
       content = <Chip label="Delivered" color="success" />;
       break;
-    case "cancelled":
+    case "Cancelled":
       content = <Chip label="Cancelled" color="error" />;
       break;
   }

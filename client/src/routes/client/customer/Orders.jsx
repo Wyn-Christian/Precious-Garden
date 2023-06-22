@@ -1,3 +1,11 @@
+import { PHPPrice, api_base_url } from "../../../app/utils";
+import { useSelector } from "react-redux";
+import {
+  useChangeStatusOrderMutation,
+  useGetCheckoutsByUserQuery,
+} from "../../../app/services/checkout";
+import { userSelector } from "../../../features/userSlice";
+
 import {
   Box,
   Button,
@@ -8,9 +16,9 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { PHPPrice } from "../../../app/utils";
+import { enqueueSnackbar } from "notistack";
 
-const OrderItem = () => {
+const OrderItem = ({ name, img_url, quantity, price, product }) => {
   return (
     <Box sx={{ display: "flex", mb: 3 }}>
       <Paper>
@@ -20,7 +28,7 @@ const OrderItem = () => {
             height: { xs: 125, md: 90 },
             backgroundColor: (t) => t.palette.primary.main,
           }}
-          image={"/images/sample/product.png"}
+          image={`${api_base_url}${img_url}`}
         />
       </Paper>
       <Box
@@ -39,26 +47,48 @@ const OrderItem = () => {
           }}
         >
           <Typography fontWeight="bold" sx={{ width: { md: 375 } }}>
-            Product name
+            {name}
           </Typography>
-          <Typography variant="caption">category</Typography>
+          <Typography variant="caption">{product.category}</Typography>
         </Box>
         <Box
           sx={{
             display: "flex",
             flexGrow: 1,
             justifyContent: "space-between",
+            width: { md: 190 },
           }}
         >
-          <Typography>Qty: 1</Typography>
-          <Typography>Price: {PHPPrice.format(1000)}</Typography>
+          <Typography>Qty: {quantity}</Typography>
+          <Typography width={{ md: 150 }}>
+            Price: {PHPPrice.format(price)}
+          </Typography>
         </Box>
       </Box>
     </Box>
   );
 };
 
-const OrderItems = () => {
+const OrderItems = ({
+  id,
+  checkout_items,
+  total_quantity,
+  total_price,
+  status,
+  created_at,
+}) => {
+  const [changeStatusOrder] = useChangeStatusOrderMutation();
+
+  const handleCancelClick = async () => {
+    await changeStatusOrder({ id, data: { status: "Cancelled" } })
+      .unwrap()
+      .then(() =>
+        enqueueSnackbar("Checkout Cancelled Successfully!", {
+          variant: "success",
+        })
+      );
+  };
+
   return (
     <Paper elevation={0}>
       <Box
@@ -70,26 +100,34 @@ const OrderItems = () => {
         }}
       >
         <Box>
-          <StatusInfo status={"To Process"} />
+          <StatusInfo status={status} />
         </Box>
         <Button
-          variant="outlined"
-          // onClick={handleCancelClick}
+          variant="contained"
+          onClick={handleCancelClick}
+          disabled={status !== "To Process"}
         >
           Cancel
         </Button>
       </Box>
       <Divider />
       <Box sx={{ p: "10px 20px" }}>
-        <OrderItem />
-        <OrderItem />
+        {checkout_items.map((item) => (
+          <OrderItem key={item.id} {...item} />
+        ))}
       </Box>
       <Divider />
-      <Box sx={{ p: 2 }}>
-        <Typography textAlign="end">
-          Total(12 items): {PHPPrice.format(1000)}
+      <Stack
+        flexDirection="row"
+        justifyContent="space-between"
+        px={3}
+        pt={2}
+      >
+        <Typography>Ordered on: {created_at}</Typography>
+        <Typography>
+          Total({total_quantity} items): {PHPPrice.format(total_price)}
         </Typography>
-      </Box>
+      </Stack>
     </Paper>
   );
 };
@@ -117,6 +155,8 @@ const StatusInfo = ({ status }) => {
 };
 
 function Orders() {
+  const user = useSelector(userSelector);
+  const { data: checkouts = [] } = useGetCheckoutsByUserQuery(user.id);
   return (
     <Box>
       <Typography
@@ -128,8 +168,9 @@ function Orders() {
         ORDER HISTORY
       </Typography>
       <Stack spacing={3}>
-        <OrderItems />
-        <OrderItems />
+        {checkouts.map((checkout) => (
+          <OrderItems key={checkout.id} {...checkout} />
+        ))}
       </Stack>
     </Box>
   );

@@ -1,5 +1,5 @@
-import { useSelector } from "react-redux";
-import { userSelector } from "../../features/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUser, userSelector } from "../../features/userSlice";
 import { Link } from "react-router-dom";
 
 import {
@@ -9,6 +9,7 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -17,24 +18,27 @@ import {
   Typography,
   useScrollTrigger,
 } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 // MUI Icons
 import MenuIcon from "@mui/icons-material/Menu";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import Footer from "../Footer";
+import { useGetCartByUserQuery } from "../../app/services/cart-item";
+import { api_base_url } from "../../app/utils";
+import { enqueueSnackbar } from "notistack";
 
 const CartItemsButton = () => {
-  const [totalItems, setTotalItems] = useState(4);
-  // const user = useSelector(userSelector);
-  // const { data: cart_items = [] } = useGetCartByUserQuery(user.id);
+  const [totalItems, setTotalItems] = useState(0);
+  const user = useSelector(userSelector);
+  const { data: cart_items = [] } = useGetCartByUserQuery(user.id);
 
-  // useEffect(() => {
-  //   let total_num = cart_items.reduce((total, item) => {
-  //     return total + item.quantity;
-  //   }, 0);
-  //   setTotalItems(total_num);
-  // }, [cart_items]);
+  useEffect(() => {
+    let total_num = cart_items.reduce((total, item) => {
+      return total + item.quantity;
+    }, 0);
+    setTotalItems(total_num);
+  }, [cart_items]);
 
   return (
     <IconButton
@@ -75,6 +79,9 @@ const MenuNavItemLink = ({ to, title, handleCloseNavMenu }) => (
 );
 
 const UserAvatarMenu = () => {
+  const dispatch = useDispatch();
+  const user = useSelector(userSelector);
+
   const [anchorElUser, setAnchorElUser] = useState(null);
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -82,12 +89,18 @@ const UserAvatarMenu = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+  const handleLogout = () => {
+    dispatch(removeUser());
+    enqueueSnackbar("Log out Successfully", { variant: "success" });
+    setAnchorElUser(null);
+  };
+
   return (
     <Box>
       <CartItemsButton />
       <Tooltip title="Open Settings">
         <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: 1 }}>
-          <Avatar alt="Sample Customer" src="/bae.png" />
+          <Avatar alt={user.name} src={`${api_base_url}${user.img_url}`} />
         </IconButton>
       </Tooltip>
       <Menu
@@ -109,6 +122,17 @@ const UserAvatarMenu = () => {
         <MenuNavItemLink to="/customer" title="profile" />
         <MenuNavItemLink to="/customer/wishlist" title="my wishlist" />
         <MenuNavItemLink to="/customer/orders" title="orders" />
+        <Divider />
+        <Box
+          component={Link}
+          to="/login"
+          onClick={handleLogout}
+          sx={{ textDecoration: "none", color: "inherit" }}
+        >
+          <MenuItem>
+            <Typography variant="button">Log-out</Typography>
+          </MenuItem>
+        </Box>
       </Menu>
     </Box>
   );
@@ -125,14 +149,6 @@ function ClientNavbar({ children }) {
   };
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
-  };
-
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
-  };
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
   };
 
   const user = useSelector(userSelector);
@@ -199,7 +215,7 @@ function ClientNavbar({ children }) {
               <NavItemLink to="/about-us" title="About Us" />
               <NavItemLink to="/products" title="Products" />
             </Box>
-            {!user.id ? (
+            {user.id ? (
               <UserAvatarMenu />
             ) : (
               <Box sx={{ display: "flex" }}>

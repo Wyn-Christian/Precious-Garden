@@ -1,8 +1,16 @@
 import { Box, Typography } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import ProductCard from "../../../components/ProductCart";
+import { useGetProductsQuery } from "../../../app/services/product";
+import { useSelector } from "react-redux";
+import { userSelector } from "../../../features/userSlice";
+import { useGetWishlistByUserQuery } from "../../../app/services/wishlist";
 
 function WishList() {
+  const { data: products = [] } = useGetProductsQuery();
+  const user = useSelector(userSelector);
+  const { data: wishlist = [] } = useGetWishlistByUserQuery(user.id);
+
   return (
     <Box>
       <Typography
@@ -14,7 +22,11 @@ function WishList() {
         WISHLISTS
       </Typography>
       <Grid container spacing={3}>
-        <ProductCard />
+        {products
+          .filter((p) => wishlist.includes(p.id))
+          .map((p) => (
+            <ProductCard isWishlist key={p.id} {...p} />
+          ))}
       </Grid>
     </Box>
   );
