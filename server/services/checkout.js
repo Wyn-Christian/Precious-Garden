@@ -5,6 +5,25 @@ const { Product } = require("../models/product");
 
 exports.list = (req, res, next) => {
   Checkout.find()
+    .sort({ createdAt: -1 })
+    .populate("customer")
+    .populate({
+      path: "checkout_items",
+      populate: {
+        path: "product",
+        populate: { path: "category", select: "name _id" },
+        select: "name price category ",
+      },
+    })
+    .then((result) => res.json(result))
+    .catch((error) => {
+      console.log(error);
+      next(error);
+    });
+};
+exports.detail = (req, res, next) => {
+  Checkout.findById(req.params.id)
+    .populate("customer")
     .populate({
       path: "checkout_items",
       populate: {
@@ -22,6 +41,7 @@ exports.list = (req, res, next) => {
 
 exports.list_customer = (req, res, next) => {
   Checkout.find({ customer: req.params.id })
+    .sort({ createdAt: -1 })
     .populate({
       path: "checkout_items",
       populate: {
@@ -54,10 +74,10 @@ exports.create = (req, res, next) => {
       console.log(
         `${checkout_result.length} checkout items documents were inserted`
       );
-      // let cart_delete_result = await CartItem.deleteMany({
-      //   customer: req.body.customer,
-      // });
-      // console.log(`Deleted ${cart_delete_result.deletedCount} documents`);
+      let cart_delete_result = await CartItem.deleteMany({
+        customer: req.body.customer,
+      });
+      console.log(`Deleted ${cart_delete_result.deletedCount} documents`);
       res.json(result);
     })
     .catch((err) => {

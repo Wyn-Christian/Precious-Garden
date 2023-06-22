@@ -53,7 +53,9 @@ function getValue(value) {
 }
 CheckoutSchema.virtual("created_at").get(function () {
   return this.createdAt
-    ? DateTime.fromJSDate(this.createdAt).toFormat("yyyy-MM-dd")
+    ? DateTime.fromJSDate(this.createdAt).toLocaleString(
+        DateTime.DATE_MED_WITH_WEEKDAY
+      )
     : "";
 });
 

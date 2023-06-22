@@ -41,8 +41,8 @@ const CustomerSchema = new Schema({
     enum: ["non-verified", "verified", "blocked"],
     default: "non-verified",
   },
-  phone: String,
-  address: String,
+  phone: { type: String, default: "n/a" },
+  address: { type: String, default: "n/a" },
   wishlist: [
     {
       type: mongoose.Types.ObjectId,

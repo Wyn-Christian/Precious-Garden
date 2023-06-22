@@ -27,7 +27,7 @@ const ProductSchema = new Schema(
     category: {
       type: String,
       required: true,
-      enum: ["plant", "pot", "soil", "tool"],
+      enum: ["Plant", "Pot", "Soil", "Tool"],
     },
     img_name: {
       type: String,

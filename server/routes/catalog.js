@@ -6,7 +6,7 @@ const category_services = require("../services/category");
 const product_services = require("../services/product");
 const user_services = require("../services/user");
 const cart_item_services = require("../services/cart-item");
-const checkout_servicees = require("../services/checkout");
+const checkout_services = require("../services/checkout");
 
 const storage = (file_dest) =>
   multer.diskStorage({
@@ -32,13 +32,6 @@ const upload_users = multer({
 const upload_product = multer({
   storage: storage("products"),
 });
-
-// Category Routes
-router.post("/category/create", category_services.create);
-router.patch("/category/:id/update", category_services.update);
-router.delete("/category/:id/delete", category_services.delete);
-router.get("/category/:id", category_services.detail);
-router.get("/categories", category_services.list);
 
 // Product Routes
 router.post(
@@ -98,11 +91,12 @@ router.delete(
 );
 
 router.get("/customer/:id/cart-items", cart_item_services.list_customer);
-router.get("/customer/:id/checkouts", checkout_servicees.list_customer);
+router.get("/customer/:id/checkouts", checkout_services.list_customer);
 
 router.post("/login", user_services.login);
 router.get("/user/:id", user_services.detail);
 router.get("/users", user_services.list);
+router.get("/customers", user_services.list_customers);
 
 // Cart Items Routes
 router.post("/cart-item/create", cart_item_services.create);
@@ -112,13 +106,13 @@ router.get("/cart-item/:id", cart_item_services.detail);
 router.get("/cart-items", cart_item_services.list);
 
 // Checkout Routes
-router.post("/checkout/create", checkout_servicees.create);
+router.post("/checkout/create", checkout_services.create);
 router.patch(
   "/checkout/:id/status-change",
-  checkout_servicees.status_change
+  checkout_services.status_change
 );
 // router.post("/checkout/:id/delete", checkout_servicees.delete);
-router.get("/checkouts/:id", checkout_servicees.list_customer);
-router.get("/checkouts", checkout_servicees.list);
+router.get("/checkouts/:id", checkout_services.detail);
+router.get("/checkouts", checkout_services.list);
 
 module.exports = router;

@@ -8,6 +8,14 @@ exports.list = (req, res, next) => {
       next(error);
     });
 };
+exports.list_customers = (req, res, next) => {
+  User.find({ position: "customer" })
+    .then((result) => res.json(result))
+    .catch((error) => {
+      console.log(error);
+      next(error);
+    });
+};
 
 exports.detail = (req, res, next) => {
   User.findById(req.params.id)

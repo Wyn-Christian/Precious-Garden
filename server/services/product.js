@@ -89,7 +89,7 @@ exports.update_plant = (req, res, next) => {
 
   PlantsProduct.findByIdAndUpdate(req.params.id, data, { new: true })
     .then((result) => {
-      console.log("Update Product Successfully", result);
+      console.log("Update Plant Product Successfully", result);
       res.json(result);
     })
     .catch((error) => {
