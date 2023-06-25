@@ -22,7 +22,6 @@ function Products() {
   const user = useSelector(userSelector);
 
   const { data: wishlist = [] } = useGetWishlistByUserQuery(user.id);
-  console.log(wishlist);
 
   const handleCategory = (event, newCategory) => {
     setCategory(newCategory);

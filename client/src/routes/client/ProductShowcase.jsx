@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { PHPPrice, api_base_url } from "../../app/utils";
 import { enqueueSnackbar } from "notistack";
@@ -28,7 +28,10 @@ import YardOutlinedIcon from "@mui/icons-material/YardOutlined";
 import YardIcon from "@mui/icons-material/Yard";
 import PetsOutlinedIcon from "@mui/icons-material/PetsOutlined";
 import PetsIcon from "@mui/icons-material/Pets";
-import { useGetProductQuery } from "../../app/services/product";
+import {
+  useGetProductQuery,
+  useViewProductMutation,
+} from "../../app/services/product";
 import LoadingProgress from "../../components/LoadingProgress";
 
 import { userSelector } from "../../features/userSlice";
@@ -77,8 +80,15 @@ function ProductShowcase() {
   const [isFavorite, setIsFavorite] = useState(false);
 
   const user = useSelector(userSelector);
+  const [viewProduct] = useViewProductMutation();
   const [addToCart] = useAddToCartMutation(user.id);
   const { data: cart_items = [] } = useGetCartByUserQuery(user.id);
+
+  useEffect(() => {
+    if (isSuccess) {
+      viewProduct({ product: product.name });
+    }
+  }, [isSuccess]);
 
   const handleAddToCart = async () => {
     if (user.id) {

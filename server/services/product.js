@@ -107,7 +107,10 @@ exports.view_product = (req, res, next) => {
 
   view
     .save()
-    .then((result) => console.log("View Product", result))
+    .then((result) => {
+      console.log("View Product", result);
+      res.json({ view_status: "success" });
+    })
     .catch((error) => {
       console.log(error);
       next(error);

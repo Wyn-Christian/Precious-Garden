@@ -27,11 +27,7 @@ function Login() {
     },
   });
 
-  const onSubmit = async () => {
-    console.log(formik.values);
-    await loginUser(formik.values);
-  };
-
+  const onSubmit = async () => await loginUser(formik.values);
   useEffect(() => {
     if (data) {
       if (data.id) {
