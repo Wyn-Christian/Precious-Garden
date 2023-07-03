@@ -13,4 +13,4 @@ COPY . .
 EXPOSE 3090
 
 # Run the API on Nodemon
-# CMD ["npm", "run", "serverstart"]
+CMD ["npm", "run", "serverstart"]
