@@ -1,3 +1,6 @@
 .env
 node_modules
 mongodb-experimentation.mongodb.js
+docker-compose.yml
+Dockerfile
+.dockerignore
