@@ -62,7 +62,7 @@ const PlantsProductSchema = new Schema({
 	pot_diameter: Number,
 	type: {
 		type: String,
-		enum: ["Indoor", "Outdoor"],
+		enum: ["Indoor", "Outdoor", "Indoor and Outdoor"],
 		required: true,
 	},
 	add_ons: [
