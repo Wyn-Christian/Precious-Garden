@@ -38,6 +38,7 @@ import {
 	useCreatePlantProductMutation,
 	useCreateProductMutation,
 } from "../../../app/services/product";
+import { enqueueSnackbar } from "notistack";
 function ProductCreate() {
 	const navigate = useNavigate();
 	const [createProduct] = useCreateProductMutation();
@@ -95,6 +96,9 @@ function ProductCreate() {
 				.unwrap()
 				.then((res) => {
 					console.log("Create Product Successfully", res);
+					enqueueSnackbar("Create Product Successfully!", {
+						variant: "success",
+					});
 					navigate(`/admin/products/${res.id}`);
 				})
 				.catch((err) => console.error(err));
@@ -103,6 +107,9 @@ function ProductCreate() {
 				.unwrap()
 				.then((res) => {
 					console.log("Create Plant Product Successfully", res);
+					enqueueSnackbar("Create Plant Product Successfully!", {
+						variant: "success",
+					});
 					navigate(`/admin/products/${res.id}`);
 				})
 				.catch((err) => console.error(err));
@@ -227,11 +234,13 @@ function ProductCreate() {
 											value={formik.values.type}
 											onChange={formik.handleChange}
 										>
-											{["Indoor", "Outdoor"].map((type) => (
-												<MenuItem key={type} value={type}>
-													{type}
-												</MenuItem>
-											))}
+											{["Indoor", "Outdoor", "Indoor and Outdoor"].map(
+												(type) => (
+													<MenuItem key={type} value={type}>
+														{type}
+													</MenuItem>
+												)
+											)}
 										</Select>
 									</FormControl>
 								</Box>
