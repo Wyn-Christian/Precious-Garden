@@ -1,9 +1,10 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { api_base_url } from "../utils";
 
 export const api = createApi({
 	reducerPath: "api",
 	baseQuery: fetchBaseQuery({
-		baseUrl: "https://precious-garden-server-production.up.railway.app",
+		baseUrl: api_base_url,
 	}),
 	tagTypes: ["Product", "User", "Cart Item", "Checkout", "Wishlist"],
 
