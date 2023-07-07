@@ -191,7 +191,7 @@ function Signup() {
 								/>
 							</Grid>
 							<Grid xs={12} md={4}>
-								<Button variant="contained" fullWidth>
+								<Button variant="contained" fullWidth onClick={onSubmit}>
 									Create an account
 								</Button>
 							</Grid>
