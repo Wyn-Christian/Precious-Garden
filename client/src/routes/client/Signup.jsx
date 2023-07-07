@@ -107,7 +107,15 @@ function Signup() {
 								</Typography>
 							</Grid>
 							<Grid xs={12} md={6}>
-								<TextField label="Full Name" variant="filled" fullWidth />
+								<TextField
+									label="Full Name"
+									variant="filled"
+									fullWidth
+									name="name"
+									autoComplete="off"
+									value={formik.values.name}
+									onChange={formik.handleChange}
+								/>
 							</Grid>
 							<Grid xs={12} md={6}>
 								<TextField
