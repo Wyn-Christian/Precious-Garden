@@ -66,7 +66,7 @@ function Products() {
 						</ToggleButton>
 					))}
 				</ToggleButtonGroup>
-				<Grid container spacing={3}>
+				<Grid container spacing={3} width={"100%"}>
 					{products
 						.filter((p) => p.category === category || category === "All")
 						.map((product) => (
