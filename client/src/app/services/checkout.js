@@ -6,7 +6,7 @@ export const checkoutApi = api.injectEndpoints({
 			query: () => `/checkouts`,
 			providesTags: (result = [], error, arg) => [
 				"Checkout",
-				...result.map(({ id }) => ({ type: "Order", id })),
+				...result.map(({ id }) => ({ type: "Checkout", id })),
 			],
 		}),
 		getCheckout: build.query({
