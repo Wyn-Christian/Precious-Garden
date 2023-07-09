@@ -90,7 +90,7 @@ exports.create_customer = (req, res, next) => {
 		password,
 		username,
 		img_name: req.file.filename,
-		type: "customer",
+		position: "customer",
 		address,
 		phone,
 	});
