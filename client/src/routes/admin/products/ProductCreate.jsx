@@ -39,6 +39,7 @@ import {
 	useCreateProductMutation,
 } from "../../../app/services/product";
 import { enqueueSnackbar } from "notistack";
+
 function ProductCreate() {
 	const navigate = useNavigate();
 	const [createProduct] = useCreateProductMutation();
